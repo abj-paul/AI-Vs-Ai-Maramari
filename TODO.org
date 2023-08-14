@@ -1,0 +1,7 @@
+- [X] Understand Gomoku
+- [X] Build a simple GUI
+- [X] Build a simple GUI where you can play Gomoku
+- [ ] Select a data structure
+- [ ] Employ the minimax algorithm, keep the ordering and utility heuristic as paramaters.
+- [ ] Connect frontend with backend.
+

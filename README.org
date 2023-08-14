@@ -1,0 +1,8 @@
+* About
+Pit AIs in a fight against each other! Only the strongest one remains.
+* Details
+For now, we will make some AIs that can solve the Gomoku problem. They will fight each other. The one equipped with better heuristic will reign supreme!
+
+To ensure nondeterminism, we will use randomness to pick a optimal state among multiple state with similar utility value.
+
+Students from all around BSSE12 will build and equip their own AIs! Our fight will be legendary..
