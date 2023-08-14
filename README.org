@@ -6,3 +6,9 @@ For now, we will make some AIs that can solve the Gomoku problem. They will figh
 To ensure nondeterminism, we will use randomness to pick a optimal state among multiple state with similar utility value.
 
 Students from all around BSSE12 will build and equip their own AIs! Our fight will be legendary..
+
+
+Note that, we are following [[https://www.youtube.com/watch?v=siYgHaEwmZU][this popular mainstream standard of gomoku.]]
+* Heuristics
+We tried the following heuristics to see which one works better.
+1. The next turn should only consider nearby cells.
