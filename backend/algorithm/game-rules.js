@@ -116,7 +116,7 @@ function findUtilityValue(current_state){
 	    utility_score += __checkLeftSide(current_state, i, j)    +    __checkRightSide(current_state, i, j)    +    __checkUpSide(current_state, i, j)    +    __checkDownSide(current_state, i, j)    +    __checkLeftDiagonal(current_state, i, j)    +    __checkRightDiagonal(current_state, i, j);
 	}
     }
-    console.log("Utility Score: "+utility_score);
+    //console.log("Utility Score: "+utility_score);
     return utility_score;
 }
 function make_move(current_state, i, j){
