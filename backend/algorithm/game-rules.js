@@ -109,7 +109,7 @@ function __checkRightDiagonal(current_state, a, b){
     return counter;
 }
 
-function findUtilityValue(current_state){
+function findUtilityValue(current_state){ // 10*n^2 
     let utility_score = 0;
     for(let i=0; i<current_state.length; i++){
 	for(let j=0; j<current_state.length; j++){
