@@ -1,0 +1,9 @@
+
+
+
+So far , we are only counting contniguous locations for utility value. But we should also consider blocked count.
+
+
+If the final state blocks opponent moves, then it should have higher utility value.
+
+For a given a i,j --> we will count its surrounding to see how many it blocked.

@@ -12,11 +12,21 @@ app.get("/", (req, res)=>{
     res.status(200).send({"message":"Server Running"});
 });
 
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
 app.post("/ai/solve", (req, res)=>{
     let state = req.body.state;
     let algoResult = minimax.expandAndFindSolution(new minimax.Node(Math.max(), Math.min(),0,state),0);
 
     let nextMove = null;
+    shuffleArray(algoResult.children);
     algoResult.children.forEach((child)=>{
 	if(child.minimaxValue == algoResult.minimaxValue) {
 	    nextMove = child;
