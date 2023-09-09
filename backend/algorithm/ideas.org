@@ -7,3 +7,38 @@ So far , we are only counting contniguous locations for utility value. But we sh
 If the final state blocks opponent moves, then it should have higher utility value.
 
 For a given a i,j --> we will count its surrounding to see how many it blocked.
+
+* Debug
+It seems our utltiy function is not working properly as it is always returning 0. Lets fix it.
+
+1. Check the pattern set each time by running it separately
+ #+begin_src javascript
+   const patterns = [
+		board[row].slice(col, col + 5).join(''), // Horizontal
+		board.map(row => row[col]).slice(row, row + 5).join(''), // Vertical
+		board.slice(row, row + 5).map((row, i) => row[col + i]).join(''), // Diagonal (top-left to bottom-right)
+		board.slice(row, row + 5).map((row, i) => row[col - i]).join('') // Diagonal (top-right to bottom-left)
+	    ];
+
+ #+end_src
+
+ #+begin_src javascript
+   const board = [
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', 'b', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', 'b', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', 'b', 'w', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', 'w', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+];
+
+ #+end_src

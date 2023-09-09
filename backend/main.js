@@ -26,7 +26,7 @@ app.post("/ai/solve", (req, res)=>{
     let algoResult = minimax.expandAndFindSolution(new minimax.Node(Math.max(), Math.min(),0,state),0);
 
     let nextMove = null;
-    shuffleArray(algoResult.children);
+    //shuffleArray(algoResult.children);
     algoResult.children.forEach((child)=>{
 	if(child.minimaxValue == algoResult.minimaxValue) {
 	    nextMove = child;
@@ -35,7 +35,7 @@ app.post("/ai/solve", (req, res)=>{
 	}
     })
     console.log("Result is: ");
-    nextMove.printNode();
+    //nextMove.printNode();
     res.status(200).send({"state": nextMove.state});
 });
 
