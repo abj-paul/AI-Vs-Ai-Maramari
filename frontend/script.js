@@ -1,54 +1,60 @@
 // GOMOKU PIECE REPRESENATION FORMAT
-const BLACK = 'b';
-const EMPTY = '-';
-const WHITE = 'w';
+const BLACK = -1;
+const EMPTY = 0;
+const WHITE = 1;
 const BOARD_SIZE = 15;
 
 const GOMOKU_PLAYER1_ADDRESS = "http://localhost:3000/ai/solve";
 
 let CURRENT_TURN = BLACK;
 const INITIAL_STATE = [
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
 
 
 let current_board_state = INITIAL_STATE;
 
 function generateBoard() {
-    // Removing Old Board
-    let board = document.getElementById("board");
-    while (board.firstChild) {
-        board.removeChild(board.firstChild);
-    }
+  // Reset the game state to its initial values
+  CURRENT_TURN = BLACK;
+  current_board_state = JSON.parse(JSON.stringify(INITIAL_STATE));
 
-    // Drawing New Board
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        for (let j = 0; j < BOARD_SIZE; j++) {
-            let cell = document.createElement("button");
-            cell.innerText = " ";
-            cell.id = `${i}-${j}`;
-            cell.classList.add("grid-item");
-            cell.onclick = function (event) { makeMove(i, j); };
-            document.getElementById("board").appendChild(cell);
-            drawMove(i, j);
-        }
+  // Removing Old Board
+  let board = document.getElementById("board");
+  while (board.firstChild) {
+    board.removeChild(board.firstChild);
+  }
+
+  // Drawing New Board
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      let cell = document.createElement("button");
+      cell.innerText = " ";
+      cell.id = `${i}-${j}`;
+      cell.classList.add("grid-item");
+      cell.onclick = function (event) {
+        makeMove(i, j);
+      };
+      document.getElementById("board").appendChild(cell);
+      drawMove(i, j);
     }
-    console.log(document.getElementById("board").children);
+  }
 }
+
 
 function drawMove(i, j) {
     if (current_board_state[i][j] == BLACK) {
@@ -62,36 +68,43 @@ function drawMove(i, j) {
 }
 
 function makeMove(i, j) {
-    console.log(i, j);
-    if (CURRENT_TURN == BLACK) {
-        current_board_state[i][j] = BLACK;
-        CURRENT_TURN = WHITE;
-    }
-    else {
-        current_board_state[i][j] = WHITE;
-        CURRENT_TURN = BLACK;
-    }
+  console.log(i, j);
+  if (CURRENT_TURN == BLACK) {
+    current_board_state[i][j] = BLACK;
+    CURRENT_TURN = WHITE;
+  } else {
+    current_board_state[i][j] = WHITE;
+    CURRENT_TURN = BLACK;
+  }
 
-    drawMove(i, j);
+  drawMove(i, j);
 
-    if (checkWin() == true) {
-        alert("YOU WONNN");
-        return;
-    }
+  if (checkWin() == true) {
+    showResultModal("You won!");
+    return;
+  }
 
-    wait_for_opponent_move(); // CORE BUSINESS LOGIC
-    if (CURRENT_TURN == BLACK) {
-        CURRENT_TURN = WHITE;
-    }
-    else {
-        CURRENT_TURN = BLACK;
-    }
+  wait_for_opponent_move(); // CORE BUSINESS LOGIC
+  if (CURRENT_TURN == BLACK) {
+    CURRENT_TURN = WHITE;
+  } else {
+    CURRENT_TURN = BLACK;
+  }
 
-    if (checkWin() == true) {
-        alert("AI WONNN");
-        return;
-    }
+  if (checkWin() == true) {
+    showResultModal("AI won!");
+    return;
+  }
 }
+
+function showResultModal(message) {
+  // Set the message in the modal
+  document.getElementById("resultMessage").textContent = message;
+
+  // Show the modal
+  $("#resultModal").modal("show");
+}
+
 
 function wait_for_opponent_move() {
     console.log("Waiting for AI Move");

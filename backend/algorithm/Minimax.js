@@ -26,7 +26,7 @@ function expandAndFindSolution(current_node, depth){ // Starts from 0
     //console.log("Entering with: ");
     //current_node.printAlphaBeta();
     if(depth==MAX_DEPTH){
-	current_node.minimaxValue = game.findUtilityValue(current_node.state, depth%2==0);
+	current_node.minimaxValue = game.findUtilityValue(current_node.state);
 	return current_node;
     }
     
