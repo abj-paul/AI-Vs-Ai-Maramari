@@ -108,8 +108,9 @@ function makeMove(i, j) {
   document.getElementById("faster").setAttribute("class","hide");
   document.getElementById("aiisdeciding").removeAttribute("class", "hide");
 
-  wait_for_opponent_move(); // CORE BUSINESS LOGIC
+  // wait_for_opponent_move(); // CORE BUSINESS LOGIC
 
+    wait_for_opponent_move(() => {
   if (CURRENT_TURN == BLACK) {
     CURRENT_TURN = WHITE;
   } else {
@@ -120,6 +121,8 @@ function makeMove(i, j) {
     showResultModal("AI won!");
     return;
   }
+    });
+
   totalMoves+=2;
 }
 
@@ -132,114 +135,75 @@ function showResultModal(message) {
 }
 
 
-function wait_for_opponent_move() {
-    console.log("Waiting for AI Move");
-    fetch(GOMOKU_PLAYER1_ADDRESS, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            "state": current_board_state
-        })
+function wait_for_opponent_move(callback) {
+  console.log("Waiting for AI Move");
+  fetch(GOMOKU_PLAYER1_ADDRESS, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      state: current_board_state,
+    }),
+  })
+    .then((response) => response.json())
+    .then((reply) => {
+      console.log("AI has replied!");
+      current_board_state = reply.state;
+      generateBoard();
+      document.getElementById("aiisdeciding").setAttribute("class", "hide");
+      document.getElementById("faster").removeAttribute("class", "hide");
+      callback(); // Call the callback function
     })
-        .then(response => response.json())
-        .then(reply => {
-            console.log("AI has replied!");
-            current_board_state = reply.state;
-            generateBoard();
-            document.getElementById("aiisdeciding").setAttribute("class", "hide");
-            document.getElementById("faster").removeAttribute("class","hide");
-        })
-        .catch(error => {
-            console.error("An error occurred:", error);
-        });
-
+    .catch((error) => {
+      console.error("An error occurred:", error);
+    });
 }
 
 function checkWin() {
-    // Row Wise
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let continuousWhitePieceCount = 0;
-        let continuousBlackPieceCount = 0;
-        for (let j = 0; j < BOARD_SIZE; j++) {
-            if (current_board_state[i][j] == WHITE){
-		continuousWhitePieceCount += 1;
-                continuousBlackPieceCount = 0;
-	    }
-            else if (current_board_state[i][j] == BLACK){
-		continuousBlackPieceCount += 1;
-                continuousWhitePieceCount = 0;
-	    } else {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount = 0;
-            }
+  const directions = [
+    [0, 1], // Horizontal
+    [1, 0], // Vertical
+    [1, 1], // Diagonal \
+    [1, -1], // Diagonal /
+  ];
 
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      for (const [dx, dy] of directions) {
+        let continuousCount = 0;
+        let currentPlayer = current_board_state[i][j];
 
-            if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
+        if (currentPlayer === EMPTY) {
+          continue;
         }
-    }
 
-    // Column Wise
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let continuousWhitePieceCount = 0;
-        let continuousBlackPieceCount = 0;
-        for (let j = 0; j < BOARD_SIZE; j++) {
-            if (current_board_state[j][i] == WHITE) {
-		continuousWhitePieceCount += 1;
-                continuousBlackPieceCount = 0;
-	    }
-            else if (current_board_state[j][i] == BLACK){
-		continuousBlackPieceCount += 1;
-                continuousWhitePieceCount = 0;
-	    } else {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount = 0;
-            }
+        for (let step = 0; step < 5; step++) {
+          const x = i + step * dx;
+          const y = j + step * dy;
 
-
-            if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
+          if (
+            x >= 0 &&
+            x < BOARD_SIZE &&
+            y >= 0 &&
+            y < BOARD_SIZE &&
+            current_board_state[x][y] === currentPlayer
+          ) {
+            continuousCount++;
+          } else {
+            break;
+          }
         }
-    }
 
-    // Diagonal
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let continuousWhitePieceCount = 0;
-        let continuousBlackPieceCount = 0;
-        for (let j = 0; j < BOARD_SIZE - i; j++) {
-            if (current_board_state[j][i + j] === WHITE) {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount++;
-            } else if (current_board_state[j][i + j] === BLACK) {
-                continuousWhitePieceCount = 0;
-                continuousBlackPieceCount++;
-            } else {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount = 0;
-            }
-
-            if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
+        if (
+          continuousCount === 5 &&
+          (currentPlayer === BLACK || currentPlayer === WHITE)
+        ) {
+          return true;
         }
+      }
     }
+  }
 
-
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let continuousWhitePieceCount = 0;
-        let continuousBlackPieceCount = 0;
-        for (let j = 0; j <= i; j++) {
-            if (current_board_state[i - j][j] === WHITE) {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount++;
-            } else if (current_board_state[i - j][j] === BLACK) {
-                continuousWhitePieceCount = 0;
-                continuousBlackPieceCount++;
-            } else {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount = 0;
-            }
-
-            if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
-        }
-    }
-    return false;
+  return false;
 }
