@@ -9,51 +9,74 @@ class Node {
         this.beta = beta;
         this.minimaxValue = minimaxValue;
         this.state = state;
-	this.children = [];
+        this.children = [];
     }
     getMiniMaxValue() {
         return (`The node has the following value of minimax ${this.minimaxValue}.`)
     }
-    printAlphaBeta(){
-	console.log(`Alpha=${this.alpha}, Beta=${this.beta}`);
+    printAlphaBeta() {
+        console.log(`Alpha=${this.alpha}, Beta=${this.beta}`);
     }
-    printNode(){
-	console.log(`\nFinal State: ${this.state}\nNumber of Children=${this.children.length}\nMinimaxValue=${this.minimaxValue}.`);
+    printNode() {
+        console.log(`\nFinal State: ${this.state}\nNumber of Children=${this.children.length}\nMinimaxValue=${this.minimaxValue}.`);
     }
 }
 
-function expandAndFindSolution(current_node, depth) {
-    if (depth == MAX_DEPTH || game.isGameOver(current_node.state)) {
-        current_node.minimaxValue = game.findUtilityValue(current_node.state, depth % 2 == 0);
-        return current_node;
-    }
-
-    let movable_cells = game.findPossibleMoves(current_node.state);
-    let minimaxValue = 0;
-
-    for (let i = 0; i < movable_cells.length; i++) {
-        const next_move = game.make_move(current_node.state, movable_cells[i].i, movable_cells[i].j);
-        const childNode = expandAndFindSolution(new Node(current_node.alpha, current_node.beta, 0, next_move), depth + 1);
-        const child_minimaxValue = childNode.minimaxValue;
-
-        if (i == 0) minimaxValue = child_minimaxValue;
-
-        if (depth % 2 == 0) { // Max Turn
-            minimaxValue = Math.max(minimaxValue, child_minimaxValue);
-            current_node.alpha = Math.max(current_node.alpha, minimaxValue);
-            if (current_node.alpha >= current_node.beta) break; // Alpha-beta pruning
-        } else { // Min Turn
-            minimaxValue = Math.min(minimaxValue, child_minimaxValue);
-            current_node.beta = Math.min(current_node.beta, minimaxValue);
-            if (current_node.alpha >= current_node.beta) break; // Alpha-beta pruning
+function surrounders(board) {
+    let indices = new Set()
+    for (let i = 0; i < 100; i++) {
+        if (board[i] !== '') {
+            if ((i - 9) >= 0 && (i - 9) < 100) indices.add(i - 9)
+            if ((i - 11) >= 0 && (i - 11) < 100) indices.add(i - 11)
+            if ((i - 10) >= 0 && (i - 10) < 100) indices.add(i - 10)
+            if ((i + 10) >= 0 && (i + 10) < 100) indices.add(i + 10)
+            if ((i + 9) >= 0 && (i + 9) < 100) indices.add(i + 9)
+            if ((i + 11) >= 0 && (i + 11) < 100) indices.add(i + 11)
+            if ((i - 1) >= 0 && (i - 1) < 100) indices.add(i - 1)
+            if ((i + 1) >= 0 && (i + 1) < 100) indices.add(i + 1)
         }
+    }
+    return indices;
+}
 
-        current_node.children.push(childNode);
+
+function calculateMinimax(current_node, maxPlayer, depth, alpha, beta) {
+    let boardValue = game.findUtilityValue(current_node, maxPlayer);
+    console.log(boardValue);
+    if (depth === MAX_DEPTH || boardvalue === 1000000 || boardvalue === -1000000) {
+        return boardValue;
     }
 
-    current_node.minimaxValue = minimaxValue;
-    console.log(`Depth=${depth}, Minimax Value=${minimaxValue}`);
-    return current_node;
+    let score = 0;
+
+    if (maxPlayer) score = -Math.max();
+    else score = Math.max();
+
+    let indices = surrounders(current_node);
+    indices = Array.from(indices);
+
+    for (let i = 0; i < indices.length; i++) {
+        if (current_node[indices[i]] === '') {
+            board[indices[i]] = 'w';
+            if (maxPlayer) {
+                board[indices[i]] = 'w';
+                let minimax_score = calculateMinimax(board, false, depth + 1, alpha, beta)
+                score = Math.max(score, minimax_score);
+                alpha = Math.max(score, alpha)
+                board[indices[i]] = ''
+                if (alpha >= beta) { break; }
+            }
+            else {
+                board[indices[i]] = 'b';
+                let minimax_score = calculateMinimax(board, true, depth + 1, alpha, beta)
+                score = Math.min(score, minimax_score);
+                beta = Math.min(minimax_score, beta)
+                board[indices[i]] = ''
+                if (alpha >= beta) { break; }
+            }
+        }
+    }
+
 }
 /*
 console.log("Final Result: ");
@@ -74,7 +97,7 @@ console.log("Final Result: ");
   [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
   [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1]
 ]), 0
-							    )).printNode();
-							    */
+                                )).printNode();
+                                */
 
-module.exports = {Node, expandAndFindSolution};
+module.exports = { Node, calculateMinimax, surrounders };

@@ -51,39 +51,39 @@ function generateBoard() {
   }
 }
 
-function resetBoard(){
-    current_board_state = [
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', 'w', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
-];
+function resetBoard() {
+  current_board_state = [
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', 'w', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+  ];
 
-    generateBoard();
-    console.log("The board has been reset");
+  generateBoard();
+  console.log("The board has been reset");
 }
 
 
 function drawMove(i, j) {
-    if (current_board_state[i][j] == BLACK) {
-        document.getElementById(`${i}-${j}`).classList.add("piece");
-        document.getElementById(`${i}-${j}`).classList.add("black");
-    }
-    else if (current_board_state[i][j] == WHITE) {
-        document.getElementById(`${i}-${j}`).classList.add("piece");
-        document.getElementById(`${i}-${j}`).classList.add("white");
-    }
+  if (current_board_state[i][j] == BLACK) {
+    document.getElementById(`${i}-${j}`).classList.add("piece");
+    document.getElementById(`${i}-${j}`).classList.add("black");
+  }
+  else if (current_board_state[i][j] == WHITE) {
+    document.getElementById(`${i}-${j}`).classList.add("piece");
+    document.getElementById(`${i}-${j}`).classList.add("white");
+  }
 }
 
 function makeMove(i, j) {
@@ -126,111 +126,111 @@ function showResultModal(message) {
 
 
 function wait_for_opponent_move() {
-    console.log("Waiting for AI Move");
-    fetch(GOMOKU_PLAYER1_ADDRESS, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            "state": current_board_state
-        })
+  console.log("Waiting for AI Move");
+  fetch(GOMOKU_PLAYER1_ADDRESS, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "state": current_board_state
     })
-        .then(response => response.json())
-        .then(reply => {
-            console.log("AI has replied!");
-            current_board_state = reply.state;
-            generateBoard();
-        })
-        .catch(error => {
-            console.error("An error occurred:", error);
-        });
+  })
+    .then(response => response.json())
+    .then(reply => {
+      console.log("AI has replied!");
+      current_board_state = reply.state;
+      generateBoard();
+    })
+    .catch(error => {
+      console.error("An error occurred:", error);
+    });
 
 }
 
 function checkWin() {
-    // Row Wise
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let continuousWhitePieceCount = 0;
-        let continuousBlackPieceCount = 0;
-        for (let j = 0; j < BOARD_SIZE; j++) {
-            if (current_board_state[i][j] == WHITE){
-		continuousWhitePieceCount += 1;
-                continuousBlackPieceCount = 0;
-	    }
-            else if (current_board_state[i][j] == BLACK){
-		continuousBlackPieceCount += 1;
-                continuousWhitePieceCount = 0;
-	    } else {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount = 0;
-            }
+  // Row Wise
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    let continuousWhitePieceCount = 0;
+    let continuousBlackPieceCount = 0;
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      if (current_board_state[i][j] == WHITE) {
+        continuousWhitePieceCount += 1;
+        continuousBlackPieceCount = 0;
+      }
+      else if (current_board_state[i][j] == BLACK) {
+        continuousBlackPieceCount += 1;
+        continuousWhitePieceCount = 0;
+      } else {
+        continuousBlackPieceCount = 0;
+        continuousWhitePieceCount = 0;
+      }
 
 
-            if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
-        }
+      if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
     }
+  }
 
-    // Column Wise
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let continuousWhitePieceCount = 0;
-        let continuousBlackPieceCount = 0;
-        for (let j = 0; j < BOARD_SIZE; j++) {
-            if (current_board_state[j][i] == WHITE) {
-		continuousWhitePieceCount += 1;
-                continuousBlackPieceCount = 0;
-	    }
-            else if (current_board_state[j][i] == BLACK){
-		continuousBlackPieceCount += 1;
-                continuousWhitePieceCount = 0;
-	    } else {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount = 0;
-            }
+  // Column Wise
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    let continuousWhitePieceCount = 0;
+    let continuousBlackPieceCount = 0;
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      if (current_board_state[j][i] == WHITE) {
+        continuousWhitePieceCount += 1;
+        continuousBlackPieceCount = 0;
+      }
+      else if (current_board_state[j][i] == BLACK) {
+        continuousBlackPieceCount += 1;
+        continuousWhitePieceCount = 0;
+      } else {
+        continuousBlackPieceCount = 0;
+        continuousWhitePieceCount = 0;
+      }
 
 
-            if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
-        }
+      if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
     }
+  }
 
-    // Diagonal
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let continuousWhitePieceCount = 0;
-        let continuousBlackPieceCount = 0;
-        for (let j = 0; j < BOARD_SIZE - i; j++) {
-            if (current_board_state[j][i + j] === WHITE) {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount++;
-            } else if (current_board_state[j][i + j] === BLACK) {
-                continuousWhitePieceCount = 0;
-                continuousBlackPieceCount++;
-            } else {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount = 0;
-            }
+  // Diagonal
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    let continuousWhitePieceCount = 0;
+    let continuousBlackPieceCount = 0;
+    for (let j = 0; j < BOARD_SIZE - i; j++) {
+      if (current_board_state[j][i + j] === WHITE) {
+        continuousBlackPieceCount = 0;
+        continuousWhitePieceCount++;
+      } else if (current_board_state[j][i + j] === BLACK) {
+        continuousWhitePieceCount = 0;
+        continuousBlackPieceCount++;
+      } else {
+        continuousBlackPieceCount = 0;
+        continuousWhitePieceCount = 0;
+      }
 
-            if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
-        }
+      if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
     }
+  }
 
 
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let continuousWhitePieceCount = 0;
-        let continuousBlackPieceCount = 0;
-        for (let j = 0; j <= i; j++) {
-            if (current_board_state[i - j][j] === WHITE) {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount++;
-            } else if (current_board_state[i - j][j] === BLACK) {
-                continuousWhitePieceCount = 0;
-                continuousBlackPieceCount++;
-            } else {
-                continuousBlackPieceCount = 0;
-                continuousWhitePieceCount = 0;
-            }
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    let continuousWhitePieceCount = 0;
+    let continuousBlackPieceCount = 0;
+    for (let j = 0; j <= i; j++) {
+      if (current_board_state[i - j][j] === WHITE) {
+        continuousBlackPieceCount = 0;
+        continuousWhitePieceCount++;
+      } else if (current_board_state[i - j][j] === BLACK) {
+        continuousWhitePieceCount = 0;
+        continuousBlackPieceCount++;
+      } else {
+        continuousBlackPieceCount = 0;
+        continuousWhitePieceCount = 0;
+      }
 
-            if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
-        }
+      if (continuousBlackPieceCount >= 5 || continuousWhitePieceCount >= 5) return true;
     }
-    return false;
+  }
+  return false;
 }

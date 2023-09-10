@@ -8,37 +8,32 @@ app.use(express.json());
 
 const PORT = 3000;
 
-app.get("/", (req, res)=>{
-    res.status(200).send({"message":"Server Running"});
+app.get("/", (req, res) => {
+    res.status(200).send({ "message": "Server Running" });
 });
 
-function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
 
-app.post("/ai/solve", (req, res)=>{
-    let state = req.body.state;
-    let algoResult = minimax.expandAndFindSolution(new minimax.Node(Math.max(), Math.min(),0,state),0);
 
-    let nextMove = null;
-    //shuffleArray(algoResult.children);
-    algoResult.children.forEach((child)=>{
-	if(child.minimaxValue == algoResult.minimaxValue) {
-	    nextMove = child;
-	    child.printNode();
-	    return;
-	}
-    })
-    console.log("Result is: ");
-    //nextMove.printNode();
-    res.status(200).send({"state": nextMove.state});
+app.post("/ai/solve", (req, res) => {
+    let board = req.body.state;
+    let indices = minimax.surrounders(board);
+    indices = Array.from(indices)
+
+    for (let i = 0; i < indices.length; i++) {
+        console.log(board[indices[i]]);
+        if (board[indices[i]] === '-') {
+            board[indices[i]] = 'w';
+            let minimax_score = minimax.calculateMinimax(board, false, 1, -Math.max(), Math.max());
+            if (minimax_score > score) {
+                bestMove = indices[i];
+                score = minimax_score;
+            }
+            board[indices[i]] = '-'
+        }
+    };
+    res.status(200).send({ "state": board });
 });
 
-app.listen(PORT, (data)=>{
+app.listen(PORT, (data) => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
