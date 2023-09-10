@@ -17,21 +17,35 @@ app.get("/", (req, res) => {
 app.post("/ai/solve", (req, res) => {
     let board = req.body.state;
     let indices = minimax.surrounders(board);
-    indices = Array.from(indices)
-
+    indices = Array.from(indices);
+    let score = -Infinity;
+    let bestMove = null; // Initialize bestMove
     for (let i = 0; i < indices.length; i++) {
-        console.log(board[indices[i]]);
-        if (board[indices[i]] === '-') {
-            board[indices[i]] = 'w';
-            let minimax_score = minimax.calculateMinimax(board, false, 1, -Math.max(), Math.max());
+        const index = indices[i];
+        const row = Math.floor(index / 15); // Assuming a 15x15 board
+        const col = index % 15;
+
+        if (board[row][col] === '-') {
+            board[row][col] = 'w';
+            let minimax_score = minimax.calculateMinimax(board, false, 1, -Infinity, Infinity);
+            console.log(minimax_score);
             if (minimax_score > score) {
-                bestMove = indices[i];
+                bestMove = index;
                 score = minimax_score;
             }
-            board[indices[i]] = '-'
+            board[row][col] = '-';
         }
     };
-    res.status(200).send({ "state": board });
+    console.log("Found best move" + bestMove);
+    if (bestMove !== null) {
+        const bestMoveRow = Math.floor(bestMove / 15);
+        const bestMoveCol = bestMove % 15;
+        board[bestMoveRow][bestMoveCol] = 'w';
+
+        res.status(200).send({ "state": board, "bestMove": bestMove });
+    } else {
+        res.status(200).send({ "state": board, "bestMove": null });
+    }
 });
 
 app.listen(PORT, (data) => {

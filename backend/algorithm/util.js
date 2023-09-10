@@ -1,7 +1,7 @@
 function findPattern(board, intendedPattern) {
 	let count = 0;
-	for (let row = 0; row < board.length; row++) {
-		for (let col = 0; col < board.length; col++) {
+	for (let row = 0; row < 15; row++) {
+		for (let col = 0; col < 15; col++) {
 			const patterns = [
 				board[row].slice(col, col + 5).join(''), // Horizontal
 				board.map(row => row[col]).slice(row, row + 5).join(''), // Vertical

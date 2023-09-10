@@ -172,14 +172,12 @@ function evaluateBoard(board, maxPlayer) {
 		if (util.findPattern(board, whiteFavor.deadtwo[i]) > 0) whitescore += util.findPattern(board, whiteFavor.deadtwo[i]) * 100;
 		if (util.findPattern(board, blackFavor.deadtwo[i]) > 0) blackscore += util.findPattern(board, blackFavor.deadtwo[i]) * 100;
 	}
-
 	if (whitescore > blackscore) return whitescore;
 	else return -1 * blackscore;
 }
 
 
 function findUtilityValue(current_state, maxPlayer) { // 10*n^2
-	console.log("Finding utility value", current_state);
 	return evaluateBoard(current_state, maxPlayer);
 }
 
