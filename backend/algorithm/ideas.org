@@ -44,64 +44,63 @@ It seems our utltiy function is not working properly as it is always returning 0
  #+end_src
 
 * temp
-#+begin_src javascript
-  
-const defensive_move = {
-        'wwwwb': 1000000,   // Winning pattern for white
-        'bbbbw': 1000000,   // Winning pattern for black
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,w,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,-,w,-,w,-,-,-,-,
+ -,-,-,-,-,-,b,-,-,w,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,w,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+ ,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+MinimaxValue=708845.
 
-        // Potential winning patterns
-        'wwwbw': 10000,     // Potential winning pattern for white
-        'bbbwb': 10000,     // Potential winning pattern for black
-        'bwww': 10000,      // Potential winning pattern for white
-        'wbbb': 10000,      // Potential winning pattern for black
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,w,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,-,w,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,-,-,w,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,w,-,w,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+ ,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+Number of Children=26
+MinimaxValue=708845.
 
-        // Open fours
-        'www-b': 1000,      // Open four for white
-        'wwwb-': 1000,      // Open four for white
-        'bbb-w': 1000,      // Open four for black
-        'bbbw-': 1000,      // Open four for black
-        'b-www': 1000,      // Open four for white
-        '-bwww': 1000,      // Open four for white
-        'w-bbb': 1000,      // Open four for black
-        '-wbbb': 1000,      // Open four for black
-
-        // Double threes
-        'wwbww': 1000,      // Double threes for white
-        'bbwbb': 1000,      // Double threes for black
-
-        // Three with one open end
-        'wbww-w': 500,      // Three with one open end for white
-        'w-wwbw': 500,      // Three with one open end for white
-        'bwbb-b': 500,      // Three with one open end for black
-        'b-bbwb': 500,      // Three with one open end for black
-
-        // Double twos
-        'bww-w-': 100,      // Double twos for white
-        '-wwbw-': 100,      // Double twos for white
-        '-ww-wb': 100,      // Double twos for white
-        'wbb-b-': 100,      // Double twos for black
-        '-bbwb-': 100,      // Double twos for black
-        '-bb-bw': 100,      // Double twos for black
-
-        // Two with one open end
-        'wwbw-': 100,       // Two with one open end for white
-        'ww-wb': 100,       // Two with one open end for white
-        'bbwb-': 100,       // Two with one open end for black
-        'bb-bw': 100,       // Two with one open end for black
-        'bw-ww': 100,       // Two with one open end for white
-        '-wbww': 100,       // Two with one open end for white
-        'wb-bb': 100,       // Two with one open end for black
-        '-bwbb': 100,       // Two with one open end for black
-
-        // Liveruns (One stone with open ends)
-        'wb-w': 10,         // Liverun for white
-        'w-bw': 10,         // Liverun for white
-        'bw-b': 10,         // Liverun for black
-        'b-wb': 10,         // Liverun for black
-
-        // Deada (One stone with closed ends)
-        'wbw': 1,           // Deada for white
-        'bwb': 1            // Deada for black
-}
-#+end_src
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,w,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,-,w,-,-,-,-,-,-,
+ -,-,-,-,-,-,b,-,-,w,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,w,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,w,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+ ,-,-,-,-,-,-,-,-,-,-,-,-,-,-,
+ -,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+Number of Children=24
+MinimaxValue=708845.
+* Ultimate Algorithm
+1) Check if defense is necessary.
+   + >= 3 open
+   + Your length =< opponent length
+2) If defense is not necessary, attack.
+   + Form the longest OPEN move
+3) If defense is necessary, defend.
+   + Block >=3 open moves

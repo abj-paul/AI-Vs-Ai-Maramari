@@ -51,135 +51,152 @@ function __availableCell(i,j, current_state){
     return false;
 }
 
-function evaluateBoard(board,maxPlayer){
-    let whiteFavor = {
-	fiveinrow: ["wwwww"],
-	livefour: [
-            "-wwww-",
-	],
-	deadfour: [
-            "bwwww-",
-            "ww-ww",
-            "ww--w"
-	],
-	livethree: [
-            "-www-",
-            "ww-w"
-	],
-	deadthree: [
-            "bwww-",
-            "bww-w",
-            "bw-ww",
-            "ww--w",
-            "w-w-w",
-            "b-www-b"
-	],
-	livetwo: [
-            "w---w"
-	],
-	deadtwo: [
-            "w-w",
-            "w--w",
-            "bww",
-            "bw-w",
-            "bw--w",
-            "ww"
-	]
-    };
+function __check_if_defense_is_necessary(current_state){
+    //open three. Note that, 4 or 5 length also contains www. So we only consider www.
+    const defense_patterns_for_black = {'-www':500, 'ww-w':500}; 
+    const defense_patterns_for_white = {'-bbb':500, 'bb-b':500}; 
+    const attack_patterns_for_white = {'-wwww':5000, 'w-www':5000, 'ww-ww':5000}; 
+    const attack_patterns_for_black = {'-bbbb':5000, 'b-bbb':5000, 'bb-bb':5000}; 
     
-    let blackFavor = {
-	fiveinrow: ["bbbbb"],
-	livefour: [
-            "-bbbb-",
-	],
-	deadfour: [
-            "wbbbb-",
-            "bbb-b",
-            "bb-bb"
-	],
-	livethree: [
-            "-bbb-",
-            "bb-b"
-	],
-	deadthree: [
-            "wbbb-",
-            "wbb-b",
-            "wb-bb",
-            "bb--b",
-            "b-b-b",
-            "w-bbb-w"
-	],
-	livetwo: [
-            "b---b"
-	],
-	deadtwo: [
-            "b-b",
-            "b--b",
-            "wbb",
-        "wb-b",
-            "wb--b",
-            "bb"
-	]
-    };
-    let whitescore = 0, blackscore = 0;
-    // let fiveinrow = 0, livefour = 0, livethree = 0, deadfour = 0, deadthree = 0, deadtwo = 0;
+    let defenseUrgencyScore = 0;
+    let attackUrgencyScore = 0;
 
-    for(let i = 0 ; i < whiteFavor.fiveinrow.length ; i++){
-        if(util.findPattern(board,whiteFavor.fiveinrow[i]) > 0) return 1000000;
-        if(util.findPattern(board,blackFavor.fiveinrow[i]) > 0) return -1000000;
+    for(let row=0; row<current_state.length; row++){
+	for(let col=0; col<current_state[row].length; col++){
+	    const patterns = [
+   		current_state[row].slice(col, col + 5).join(''), // Horizontal
+   		current_state.map(row => row[col]).slice(row, row + 5).join(''), // Vertical
+   		current_state.slice(row, row + 5).map((row, i) => row[col + i]).join(''), // Diagonal (top-left to bottom-right)
+   		current_state.slice(row, row + 5).map((row, i) => row[col - i]).join('') // Diagonal (top-right to bottom-left)
+	    ];
+
+	    for(const localPattern of patterns){
+		if(ROLE==BLACK){
+		    for(const defensePattern in defense_patterns_for_black){
+			if(localPattern.includes(defensePattern) || localPattern.includes(defensePattern.split('').reverse().join(''))) defenseUrgencyScore+=defense_patterns_for_black[defensePattern];
+		    }
+
+		    for(const attackPattern in attack_patterns_for_black){
+			if(localPattern.includes(attackPattern) || localPattern.includes(attackPattern.split('').reverse().join(''))) attackUrgencyScore+=attack_patterns_for_black[attackPattern];
+		    }
+
+		}
+		else if(ROLE==WHITE){
+		    for(const defensePattern in defense_patterns_for_white){
+			if(localPattern.includes(defensePattern) || localPattern.includes(defensePattern.split('').reverse().join(''))) defenseUrgencyScore+=defense_patterns_for_white[defensePattern];
+		    }
+		    for(const attackPattern in attack_patterns_for_white){
+			if(localPattern.includes(attackPattern) || localPattern.includes(attackPattern.split('').reverse().join(''))) attackUrgencyScore+=attack_patterns_for_black[attackPattern];
+		    }
+		}
+	    }
+
+	}
     }
-    for(let i = 0 ; i < whiteFavor.livefour.length ; i++){
-        if(util.findPattern(board,whiteFavor.livefour[i])) return 100000;
-        if(util.findPattern(board,blackFavor.livefour[i]) > 0) return -100000;
-    }
-    for(let i = 0 ; i < whiteFavor.deadfour.length ; i++){
-        if(util.findPattern(board,whiteFavor.deadfour[i]) > 0){
-            if(maxPlayer) return 10000;
-            else whitescore += util.findPattern(board,whiteFavor.deadfour[i])*10000;
-        }
-        if(util.findPattern(board,blackFavor.deadfour[i]) > 0){
-            if(!maxPlayer) return -10000;
-            else blackscore += util.findPattern(board,blackFavor.deadfour[i])*10000;
-        }
-    }
-    for(let i = 0 ; i < whiteFavor.livethree.length ; i++){
-        if(util.findPattern(board,whiteFavor.livethree[i]) > 0){
-            if(maxPlayer) return 5000;
-            else whitescore += util.findPattern(board,whiteFavor.livethree[i])*4000;
-        }
-        if(util.findPattern(board,blackFavor.livethree[i]) > 0){
-            if(!maxPlayer) return -4500;
-            else blackscore += util.findPattern(board,blackFavor.livethree[i])*4000;
-        }
-    }
-    for(let i = 0 ; i < whiteFavor.deadthree.length ; i++){
-        if(util.findPattern(board,whiteFavor.deadthree[i]) > 0){
-            if(maxPlayer) return 2000;
-            else whitescore += util.findPattern(board,whiteFavor.deadthree[i])*4000;
-        }
-        if(util.findPattern(board,blackFavor.deadthree[i]) > 0){
-            if(!maxPlayer) return -2000;
-            else blackscore += util.findPattern(board,blackFavor.deadthree[i])*4000;
-        }
-        // if(util.findPattern(board,whiteFavor.deadthree[i]) > 0) whitescore += util.findPattern(board,whiteFavor.deadthree[i])*300;
-        // if(util.findPattern(board,blackFavor.deadthree[i]) > 0) blackscore += util.findPattern(board,blackFavor.deadthree[i])*300;
-    }
-    for(let i = 0 ; i < whiteFavor.livetwo.length ; i++){
-        if(util.findPattern(board,whiteFavor.livetwo[i]) > 0) whitescore += util.findPattern(board,whiteFavor.livetwo[i])*200;
-        if(util.findPattern(board,blackFavor.livetwo[i]) > 0) blackscore += util.findPattern(board,blackFavor.livetwo[i])*200;
-    }
-    for(let i = 0 ; i < whiteFavor.deadtwo.length ; i++){
-        if(util.findPattern(board,whiteFavor.deadtwo[i]) > 0) whitescore += util.findPattern(board,whiteFavor.deadtwo[i])*100;
-        if(util.findPattern(board,blackFavor.deadtwo[i]) > 0) blackscore += util.findPattern(board,blackFavor.deadtwo[i])*100;
-    }
-    
-    if(whitescore > blackscore) return whitescore;
-    else return -1*blackscore;
+
+    return defenseUrgencyScore>=attackUrgencyScore;
 }
 
 
-function findUtilityValue(current_state, minimax){ // 10*n^2
-    return evaluateBoard(current_state, minimax);
+function __evaluateAttack(current_state){
+    const attackPatternsForBlack = {
+	'b':5, 
+	'bb':50, '-b-b':50,
+	'bbb':500, 'b-bb':500,
+	'bbbb':5000, 'bbbb-': 5000, 'b-bbb':5000, 'bb-bb':5000,
+	'bbbbb':50000
+    };
+
+    const attackPatternsForWhite = {
+    'w': 5,
+	'ww': 50, '-w-w': 50,
+	'www': 500, 'w-ww': 500,
+	'wwww': 5000, 'wwww-': 5000, 'w-www': 5000, 'ww-ww': 50000,
+	'wwwww': 50000
+    };
+
+    let attackScore = 0;
+    
+    for(let row=0; row<current_state.length; row++){
+	for(let col=0; col<current_state[row].length; col++){
+	    const patterns = [
+   		current_state[row].slice(col, col + 5).join(''), // Horizontal
+   		current_state.map(row => row[col]).slice(row, row + 5).join(''), // Vertical
+   		current_state.slice(row, row + 5).map((row, i) => row[col + i]).join(''), // Diagonal (top-left to bottom-right)
+   		current_state.slice(row, row + 5).map((row, i) => row[col - i]).join('') // Diagonal (top-right to bottom-left)
+	    ];
+
+	    for(const pattern of patterns){
+		if(ROLE==BLACK){
+		    if(pattern=='wwwww'){
+			console.log("DEBUG-------Found wwwww!");
+		    }
+		    for(const attackPattern in attackPatternsForBlack){
+			if(pattern.includes(attackPattern) || pattern.includes(attackPattern.split('').reverse().join(''))) attackScore += attackPatternsForBlack[attackPattern];
+		    }
+		}else if(ROLE==WHITE){
+		    for(const attackPattern in attackPatternsForWhite){
+			if(pattern.includes(attackPattern) || pattern.includes(attackPattern.split('').reverse().join(''))) attackScore += attackPatternsForWhite[attackPattern];
+		    }
+
+		}
+	    }
+	    
+	}
+    }
+		
+    return attackScore;
+}
+
+function __evaluateDefense(current_state){
+    const defensePatternsForWhite = {
+	'wbbb': 5000, 'bwbb':5000, 
+	'wbbbb': 50000, 'bwbbb':500000, 'bbwbb':50000
+    };
+
+    const defensePatternsForBlack = {
+	'bwww': 5000, 'wbww':5000, 
+	'bwwww': 50000, 'wbwww':50000, 'wwbww':50000
+    };
+
+
+    let defenseScore = 0;
+     for(let row=0; row<current_state.length; row++){
+	for(let col=0; col<current_state[row].length; col++){
+	    const patterns = [
+   		current_state[row].slice(col, col + 5).join(''), // Horizontal
+   		current_state.map(row => row[col]).slice(row, row + 5).join(''), // Vertical
+   		current_state.slice(row, row + 5).map((row, i) => row[col + i]).join(''), // Diagonal (top-left to bottom-right)
+   		current_state.slice(row, row + 5).map((row, i) => row[col - i]).join('') // Diagonal (top-right to bottom-left)
+	    ];
+
+	    for(const pattern of patterns){
+		if(ROLE==WHITE){
+		    for(const defensePattern in defensePatternsForWhite){
+			if(pattern.includes(defensePattern) || pattern.includes(defensePattern.split('').reverse().join('')))
+			    defenseScore += defensePatternsForWhite[defensePattern];
+		    }
+		}
+		else if(ROLE==BLACK){
+		    for(const defensePattern in defensePatternsForBlack){
+			if(pattern.includes(defensePattern) || pattern.includes(defensePattern.split('').reverse().join('')))
+			    defenseScore += defensePatternsForBlack[defensePattern];
+		    }
+		}
+	    }
+	}
+     }
+    return defenseScore;
+}
+
+
+function findUtilityValue(current_state, minimax){ 
+    if(__check_if_defense_is_necessary(current_state)){
+	//console.log("Selected DEFENSE");
+	return __evaluateDefense(current_state);
+    }
+    //console.log("Selected ATTACK");
+    return __evaluateAttack(current_state);
 }
 
 

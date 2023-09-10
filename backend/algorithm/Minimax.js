@@ -1,5 +1,5 @@
 const game = require("./game-rules.js");
-const MAX_DEPTH = 4;
+const MAX_DEPTH = 3;
 
 // State = 2D Matrix of 0,1,2
 // Node = alpha, beta, minimax value
@@ -23,7 +23,7 @@ class Node {
 }
 
 function expandAndFindSolution(current_node, depth) {
-    if (depth == MAX_DEPTH || game.isGameOver(current_node.state)) {
+    if (depth == MAX_DEPTH) { //  || game.isGameOver(current_node.state)
         current_node.minimaxValue = game.findUtilityValue(current_node.state, depth % 2 == 0);
         return current_node;
     }
@@ -52,7 +52,7 @@ function expandAndFindSolution(current_node, depth) {
     }
 
     current_node.minimaxValue = minimaxValue;
-    console.log(`Depth=${depth}, Minimax Value=${minimaxValue}`);
+    //console.log(`Depth=${depth}, Minimax Value=${minimaxValue}`);
     return current_node;
 }
 /*
