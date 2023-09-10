@@ -60,7 +60,7 @@ function calculateMinimax(current_node, maxPlayer, depth, alpha, beta) {
 
     for (let i = 0; i < indices.length; i++) {
         const index = indices[i];
-        const row = Math.floor(index / 15); // Assuming a 15x15 board
+        const row = Math.floor(index / 15);//15x15
         const col = index % 15;
 
         if (current_node[row][col] === '-') {
