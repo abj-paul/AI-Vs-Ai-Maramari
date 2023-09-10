@@ -37,11 +37,47 @@
     </div>
   </div>
 
+
   <!-- Generate the Board -->
-  <div class="board-container">
-    <div class="grid-container" id="board"></div>
-    <button class="reset-button" onclick="resetBoard()">Reset Board</button>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-1">
+        <div class="info">
+          Your Piece: <div class="piece black"></div>
+          AI piece: <div class="piece white"></div>
+          <p class="score">Score: 0</p>
+          <p class="moves"> Moves: 0</p>
+        </div>
+        <button class="btn btn-warning" onclick="resetBoard()">Reset Board</button>
+
+      </div>
+      <div class="col-sm-8">
+        <div class="board-container">
+          <p>Welcome to Gomoku!</p>
+
+          <div class="grid-container" id="board">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <figure id="circle" class="">
+          <img src="./resources/cute-in-circle.gif" alt="">
+          <figcaption>Gomoku is funn~</figcaption>
+        </figure>
+
+        <figure id="faster">
+          <img src="./resources/faster.gif" alt="">
+          <figcaption>Faster human!</figcaption>
+        </figure>
+
+        <figure id="aiisdeciding" class="hide">
+          <img src="./resources/ai-is-deciding.gif" alt="">
+          <figcaption>AI is deciding....</figcaption>
+        </figure>
+      </div>
+    </div>
   </div>
+
   <!-- Display Result -->
   <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel">
       <div class="modal-dialog" role="document">
@@ -58,6 +94,7 @@
         </div>
       </div>
   </div>
+
   <script>
       $(document).ready(function () {
           $('#welcomeModal').modal('show');

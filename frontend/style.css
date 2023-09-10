@@ -1,6 +1,7 @@
-body {
-    background-color: lightgreen;
+.container {
+    background-color: khaki;
 }
+/*
 .reset-button{
     margin-left: 50%;
     margin-top: 10px;
@@ -13,6 +14,7 @@ body {
 .reset-button:hover{
   background-color: darkkhaki;
 }
+*/
 .grid-container {
     display: grid;
     grid-template-columns: repeat(15, 1fr);
@@ -23,12 +25,13 @@ body {
     width: 700px;
     margin: auto;
     margin-top: 5%;
+    padding: 10px;
 }
 
 .grid-item {
     width: calc((100%/15)-2px);
     height: calc((100%/15)-2px);
-    background-color: lightgray;
+    background-color: rgb(68, 3, 3);
     border: 1px solid white;
     text-align: center;
 }
@@ -67,4 +70,14 @@ body {
 
 .white {
   background-color: white;
+}
+
+.hide {
+  display: none;
+}
+
+.info {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  text-align: center;
 }

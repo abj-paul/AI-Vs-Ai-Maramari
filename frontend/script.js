@@ -4,6 +4,8 @@ const EMPTY = '-';
 const WHITE = 'w';
 const BOARD_SIZE = 15;
 
+let totalMoves = 1;
+
 const GOMOKU_PLAYER1_ADDRESS = "http://localhost:3000/ai/solve";
 
 let CURRENT_TURN = BLACK;
@@ -102,8 +104,12 @@ function makeMove(i, j) {
     showResultModal("You won!");
     return;
   }
+  
+  document.getElementById("faster").setAttribute("class","hide");
+  document.getElementById("aiisdeciding").removeAttribute("class", "hide");
 
   wait_for_opponent_move(); // CORE BUSINESS LOGIC
+
   if (CURRENT_TURN == BLACK) {
     CURRENT_TURN = WHITE;
   } else {
@@ -114,6 +120,7 @@ function makeMove(i, j) {
     showResultModal("AI won!");
     return;
   }
+  totalMoves+=2;
 }
 
 function showResultModal(message) {
@@ -141,6 +148,8 @@ function wait_for_opponent_move() {
             console.log("AI has replied!");
             current_board_state = reply.state;
             generateBoard();
+            document.getElementById("aiisdeciding").setAttribute("class", "hide");
+            document.getElementById("faster").removeAttribute("class","hide");
         })
         .catch(error => {
             console.error("An error occurred:", error);
