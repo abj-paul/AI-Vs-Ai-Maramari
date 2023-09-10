@@ -1,3 +1,5 @@
+const util = require("./util.js");
+
 const BLACK = 'b';
 const EMPTY = '-';
 const WHITE = 'w';
@@ -6,8 +8,14 @@ const WINNING_PLY = 5;
 const WINNER_SCORE = 50000;
 let ROLE  = WHITE;
 
+
 function setPlayerRole(role){
     ROLE = role;
+}
+
+function isGameOver(state){
+    if(util.findPattern(state, "bbbbb") || util.findPattern(state, "wwwww")) return true;
+    return false;
 }
 
 // Current Rule - return all nearby cells
@@ -43,96 +51,135 @@ function __availableCell(i,j, current_state){
     return false;
 }
 
-
-function evaluateBoard(board, player) {
-    const opponent = player === 'b' ? 'w' : 'b'; // Opponent's color
-
-    // Define weights for different patterns
-    const patternWeights = {
-        // Winning patterns
-        'wwww-': 1000000,   // Winning pattern for white
-        'bbbb-': 1000000,   // Winning pattern for black
-
-        // Potential winning patterns
-        'www-w': 10000,     // Potential winning pattern for white
-        'bbb-b': 10000,     // Potential winning pattern for black
-        '-www': 10000,      // Potential winning pattern for white
-        '-bbb': 10000,      // Potential winning pattern for black
-
-        // Open fours
-        'www--': 1000,      // Open four for white
-        'bbb--': 1000,      // Open four for black
-        '--www': 1000,      // Open four for white
-        '--bbb': 1000,      // Open four for black
-
-        // Double threes
-        'ww-ww': 1000,      // Double threes for white
-        'bb-bb': 1000,      // Double threes for black
-
-        // Three with one open end
-        'w-ww-w': 500,      // Three with one open end for white
-        'b-bb-b': 500,      // Three with one open end for black
-
-        // Double twos
-        '-ww-w-': 100,      // Double twos for white
-        '-bb-b-': 100,      // Double twos for black
-
-        // Two with one open end
-        'ww-w-': 100,       // Two with one open end for white
-        'bb-b-': 100,       // Two with one open end for black
-        '-w-ww': 100,       // Two with one open end for white
-        '-b-bb': 100,       // Two with one open end for black
-
-        // Liveruns (One stone with open ends)
-        'w--w': 10,         // Liverun for white
-        'b--b': 10,         // Liverun for black
-
-        // Deada (One stone with closed ends)
-        'w-w': 1,           // Deada for white
-        'b-b': 1            // Deada for black
+function evaluateBoard(board,maxPlayer){
+    let whiteFavor = {
+	fiveinrow: ["wwwww"],
+	livefour: [
+            "-wwww-",
+	],
+	deadfour: [
+            "bwwww-",
+            "ww-ww",
+            "ww--w"
+	],
+	livethree: [
+            "-www-",
+            "ww-w"
+	],
+	deadthree: [
+            "bwww-",
+            "bww-w",
+            "bw-ww",
+            "ww--w",
+            "w-w-w",
+            "b-www-b"
+	],
+	livetwo: [
+            "w---w"
+	],
+	deadtwo: [
+            "w-w",
+            "w--w",
+            "bww",
+            "bw-w",
+            "bw--w",
+            "ww"
+	]
     };
+    
+    let blackFavor = {
+	fiveinrow: ["bbbbb"],
+	livefour: [
+            "-bbbb-",
+	],
+	deadfour: [
+            "wbbbb-",
+            "bbb-b",
+            "bb-bb"
+	],
+	livethree: [
+            "-bbb-",
+            "bb-b"
+	],
+	deadthree: [
+            "wbbb-",
+            "wbb-b",
+            "wb-bb",
+            "bb--b",
+            "b-b-b",
+            "w-bbb-w"
+	],
+	livetwo: [
+            "b---b"
+	],
+	deadtwo: [
+            "b-b",
+            "b--b",
+            "wbb",
+        "wb-b",
+            "wb--b",
+            "bb"
+	]
+    };
+    let whitescore = 0, blackscore = 0;
+    // let fiveinrow = 0, livefour = 0, livethree = 0, deadfour = 0, deadthree = 0, deadtwo = 0;
 
-    let playerScore = 0;
-    let opponentScore = 0;
-
-    // Evaluate the board horizontally, vertically, and diagonally
-    for (let row = 0; row < board.length; row++) {
-        for (let col = 0; col < board[row].length; col++) {
-            // Check patterns in all eight directions from the current position
-            const patterns = [
-                board[row].slice(col, col + 5).join(''), // Horizontal
-                board.map(row => row[col]).slice(row, row + 5).join(''), // Vertical
-                board.slice(row, row + 5).map((row, i) => row[col + i]).join(''), // Diagonal (top-left to bottom-right)
-                board.slice(row, row + 5).map((row, i) => row[col - i]).join('') // Diagonal (top-right to bottom-left)
-            ];
-
-	    for (const pattern of patterns) {
-		for(let patternKey in patternWeights){
-		    if (pattern.includes(patternKey)) {
-			if (pattern.includes(player)) {
-			    playerScore += patternWeights[patternKey];
-			} else if (pattern.includes(opponent)) {
-			    opponentScore += patternWeights[patternKey];
-			}
-		    }
-		}
-	    }
-	}
+    for(let i = 0 ; i < whiteFavor.fiveinrow.length ; i++){
+        if(util.findPattern(board,whiteFavor.fiveinrow[i]) > 0) return 1000000;
+        if(util.findPattern(board,blackFavor.fiveinrow[i]) > 0) return -1000000;
     }
-
-    // Calculate the overall utility score for the player
-    return playerScore - opponentScore;
+    for(let i = 0 ; i < whiteFavor.livefour.length ; i++){
+        if(util.findPattern(board,whiteFavor.livefour[i])) return 100000;
+        if(util.findPattern(board,blackFavor.livefour[i]) > 0) return -100000;
+    }
+    for(let i = 0 ; i < whiteFavor.deadfour.length ; i++){
+        if(util.findPattern(board,whiteFavor.deadfour[i]) > 0){
+            if(maxPlayer) return 10000;
+            else whitescore += util.findPattern(board,whiteFavor.deadfour[i])*10000;
+        }
+        if(util.findPattern(board,blackFavor.deadfour[i]) > 0){
+            if(!maxPlayer) return -10000;
+            else blackscore += util.findPattern(board,blackFavor.deadfour[i])*10000;
+        }
+    }
+    for(let i = 0 ; i < whiteFavor.livethree.length ; i++){
+        if(util.findPattern(board,whiteFavor.livethree[i]) > 0){
+            if(maxPlayer) return 5000;
+            else whitescore += util.findPattern(board,whiteFavor.livethree[i])*4000;
+        }
+        if(util.findPattern(board,blackFavor.livethree[i]) > 0){
+            if(!maxPlayer) return -4500;
+            else blackscore += util.findPattern(board,blackFavor.livethree[i])*4000;
+        }
+    }
+    for(let i = 0 ; i < whiteFavor.deadthree.length ; i++){
+        if(util.findPattern(board,whiteFavor.deadthree[i]) > 0){
+            if(maxPlayer) return 2000;
+            else whitescore += util.findPattern(board,whiteFavor.deadthree[i])*4000;
+        }
+        if(util.findPattern(board,blackFavor.deadthree[i]) > 0){
+            if(!maxPlayer) return -2000;
+            else blackscore += util.findPattern(board,blackFavor.deadthree[i])*4000;
+        }
+        // if(util.findPattern(board,whiteFavor.deadthree[i]) > 0) whitescore += util.findPattern(board,whiteFavor.deadthree[i])*300;
+        // if(util.findPattern(board,blackFavor.deadthree[i]) > 0) blackscore += util.findPattern(board,blackFavor.deadthree[i])*300;
+    }
+    for(let i = 0 ; i < whiteFavor.livetwo.length ; i++){
+        if(util.findPattern(board,whiteFavor.livetwo[i]) > 0) whitescore += util.findPattern(board,whiteFavor.livetwo[i])*200;
+        if(util.findPattern(board,blackFavor.livetwo[i]) > 0) blackscore += util.findPattern(board,blackFavor.livetwo[i])*200;
+    }
+    for(let i = 0 ; i < whiteFavor.deadtwo.length ; i++){
+        if(util.findPattern(board,whiteFavor.deadtwo[i]) > 0) whitescore += util.findPattern(board,whiteFavor.deadtwo[i])*100;
+        if(util.findPattern(board,blackFavor.deadtwo[i]) > 0) blackscore += util.findPattern(board,blackFavor.deadtwo[i])*100;
+    }
+    
+    if(whitescore > blackscore) return whitescore;
+    else return -1*blackscore;
 }
 
 
 function findUtilityValue(current_state, minimax){ // 10*n^2
-    /*if(minimax) return evaluateBoard(current_state, ROLE);
-    else {
-	if(ROLE==WHITE) return evaluateBoard(current_state, BLACK);
-	else return evaluateBoard(current_state, WHITE);
-	}*/
-
-    return evaluateBoard(current_state, BLACK);
+    return evaluateBoard(current_state, minimax);
 }
 
 
@@ -149,4 +196,4 @@ function make_move(current_state, i, j){
 
 
 
-module.exports = {findPossibleMoves, findUtilityValue, make_move}
+module.exports = {findPossibleMoves, findUtilityValue, make_move, isGameOver}

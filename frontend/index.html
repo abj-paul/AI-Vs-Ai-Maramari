@@ -7,19 +7,64 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
   <link rel="stylesheet" href="style.css">
   <script src="script.js"></script>
 </head>
+
 <body>
+  <!-- Welcome Section -->
+  <div class="modal fade" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="welcomeModalLabel">Welcome to Gomoku!</h4>
+        </div>
+        <div class="modal-body">
+          <p>Welcome to Gomoku! This is a simple and fun game. Click the "Start Playing" button to begin.</p>
+          <p>How to Play:</p>
+          <ul>
+            <li>Place your pieces on the grid by clicking on the cells.</li>
+            <li>The goal is to get five of your pieces in a row horizontally, vertically, or diagonally.</li>
+            <li>Good luck and enjoy the game!</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <!-- Start Playing" button -->
+          <button type="button" class="btn btn-primary" id="startPlayingButton" data-dismiss="modal">Start
+            Playing</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-
-
-  <div class="grid-container" id="board">
-    </div> 
-  
+  <!-- Generate the Board -->
+  <div class="board-container">
+    <div class="grid-container" id="board"></div>
+    <button class="reset-button" onclick="resetBoard()">Reset Board</button>
+  </div>
+  <!-- Display Result -->
+  <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="resultModalLabel">Game Result</h4>
+          </div>
+          <div class="modal-body">
+            <p id="resultMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+  </div>
   <script>
-      generateBoard();
+      $(document).ready(function () {
+          $('#welcomeModal').modal('show');
+        });
+      document.getElementById('startPlayingButton').addEventListener('click', function () {
+         generateBoard();
+        });
   </script>
 
 </body>
