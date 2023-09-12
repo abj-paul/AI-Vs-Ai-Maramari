@@ -15,28 +15,37 @@ app.get("/", (req, res) => {
 
 
 app.post("/ai/solve", (req, res) => {
-    let board = req.body.state;
-    let indices = minimax.surrounders(board);
-    indices = Array.from(indices);
+    const board = req.body.state;
+    const indices = Array.from(minimax.surrounders(board));
+
     let score = -Infinity;
     let bestMove = null; // Initialize bestMove
-    for (let i = 0; i < indices.length; i++) {
-        const index = indices[i];
+
+    for (const index of indices) {
         const row = Math.floor(index / 10); // Assuming a 10x10 board
         const col = index % 10;
 
         if (board[row][col] === '-') {
             board[row][col] = 'w';
-            let minimax_score = minimax.calculateMinimax(board, false, 1, -Infinity, Infinity);
+            const minimax_score = minimax.calculateMinimax(board, false, 1, -Infinity, Infinity);
             console.log(minimax_score);
+
+            if (minimax_score === 1000000) { // Winning move
+                bestMove = index;
+                break;
+            }
+
             if (minimax_score > score) {
                 bestMove = index;
                 score = minimax_score;
             }
+
             board[row][col] = '-';
         }
-    };
-    console.log("Found best move" + bestMove);
+    }
+
+    console.log("Found best move: " + bestMove);
+
     if (bestMove !== null) {
         const bestMoveRow = Math.floor(bestMove / 10);
         const bestMoveCol = bestMove % 10;

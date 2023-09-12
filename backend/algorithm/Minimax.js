@@ -22,7 +22,14 @@ class Node {
     }
 }
 
+const surroundersMemo = new Map();
+
 function surrounders(board) {
+    const boardString = board.toString();
+    if (surroundersMemo.has(boardString)) {
+        return surroundersMemo.get(boardString);
+    }
+
     const numRows = 10;
     const numCols = 10;
     const indices = new Set();
@@ -43,11 +50,24 @@ function surrounders(board) {
         }
     }
 
+    surroundersMemo.set(boardString, indices);
     return indices;
 }
 
+// Use an array to store calculated minimax scores
+const transpositionTable = new Map();
 
 function calculateMinimax(current_node, maxPlayer, depth, alpha, beta) {
+    const boardString = current_node.toString();
+
+    // Transposition table lookup
+    if (transpositionTable.has(boardString)) {
+        const cachedEntry = transpositionTable.get(boardString);
+        if (cachedEntry.depth >= depth) {
+            return cachedEntry.score;
+        }
+    }
+
     let boardValue = game.findUtilityValue(current_node, maxPlayer);
     if (depth === MAX_DEPTH || boardValue === 1000000 || boardValue === -1000000) {
         return boardValue;
@@ -55,34 +75,37 @@ function calculateMinimax(current_node, maxPlayer, depth, alpha, beta) {
 
     let score = maxPlayer ? -Infinity : Infinity; // Initialize score based on maxPlayer
 
-    let indices = surrounders(current_node);
-    indices = Array.from(indices);
+    const indices = surrounders(current_node);
+    const indicesArray = Array.from(indices);
 
-    for (let i = 0; i < indices.length; i++) {
-        const index = indices[i];
-        const row = Math.floor(index / 10);//10x10
+    for (let i = 0; i < indicesArray.length; i++) {
+        const index = indicesArray[i];
+        const row = Math.floor(index / 10); // 10x10
         const col = index % 10;
 
         if (current_node[row][col] === '-') {
-            current_node[row][col] = maxPlayer ? 'w' : 'b'; // Set the board at (row, col) based on maxPlayer
+            current_node[row][col] = maxPlayer ? 'w' : 'b';
 
-            if (maxPlayer) {
-                let minimax_score = calculateMinimax(current_node, false, depth + 1, alpha, beta);
-                score = Math.max(score, minimax_score);
-                alpha = Math.max(score, alpha);
-            } else {
-                let minimax_score = calculateMinimax(current_node, true, depth + 1, alpha, beta);
-                score = Math.min(score, minimax_score);
-                beta = Math.min(minimax_score, beta);
-            }
+            let minimax_score = calculateMinimax(current_node, !maxPlayer, depth + 1, alpha, beta);
+            score = maxPlayer ? Math.max(score, minimax_score) : Math.min(score, minimax_score);
 
             current_node[row][col] = '-';
 
+            if (maxPlayer) {
+                alpha = Math.max(alpha, score);
+            } else {
+                beta = Math.min(beta, score);
+            }
+
+            // Alpha-Beta pruning
             if (alpha >= beta) {
                 break;
             }
         }
     }
+
+    // Store in transposition table
+    transpositionTable.set(boardString, { depth, score });
 
     return score;
 }
