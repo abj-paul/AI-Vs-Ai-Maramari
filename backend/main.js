@@ -22,8 +22,8 @@ app.post("/ai/solve", (req, res) => {
     let bestMove = null; // Initialize bestMove
     for (let i = 0; i < indices.length; i++) {
         const index = indices[i];
-        const row = Math.floor(index / 15); // Assuming a 15x15 board
-        const col = index % 15;
+        const row = Math.floor(index / 10); // Assuming a 10x10 board
+        const col = index % 10;
 
         if (board[row][col] === '-') {
             board[row][col] = 'w';
@@ -38,8 +38,8 @@ app.post("/ai/solve", (req, res) => {
     };
     console.log("Found best move" + bestMove);
     if (bestMove !== null) {
-        const bestMoveRow = Math.floor(bestMove / 15);
-        const bestMoveCol = bestMove % 15;
+        const bestMoveRow = Math.floor(bestMove / 10);
+        const bestMoveCol = bestMove % 10;
         board[bestMoveRow][bestMoveCol] = 'w';
 
         res.status(200).send({ "state": board, "bestMove": bestMove });

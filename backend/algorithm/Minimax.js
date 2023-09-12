@@ -23,8 +23,8 @@ class Node {
 }
 
 function surrounders(board) {
-    const numRows = 15;
-    const numCols = 15;
+    const numRows = 10;
+    const numCols = 10;
     const indices = new Set();
 
     for (let row = 0; row < numRows; row++) {
@@ -60,8 +60,8 @@ function calculateMinimax(current_node, maxPlayer, depth, alpha, beta) {
 
     for (let i = 0; i < indices.length; i++) {
         const index = indices[i];
-        const row = Math.floor(index / 15);//15x15
-        const col = index % 15;
+        const row = Math.floor(index / 10);//10x10
+        const col = index % 10;
 
         if (current_node[row][col] === '-') {
             current_node[row][col] = maxPlayer ? 'w' : 'b'; // Set the board at (row, col) based on maxPlayer

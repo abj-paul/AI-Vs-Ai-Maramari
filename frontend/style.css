@@ -15,8 +15,8 @@ body {
 }
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(15, 1fr);
-    grid-template-rows: repeat(15, 1fr);
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
     gap: 2px;
     border: 1px solid black;
     height: 600px;
@@ -26,8 +26,8 @@ body {
 }
 
 .grid-item {
-    width: calc((100%/15)-2px);
-    height: calc((100%/15)-2px);
+    width: calc((100%/10)-2px);
+    height: calc((100%/10)-2px);
     background-color: lightgray;
     border: 1px solid white;
     text-align: center;

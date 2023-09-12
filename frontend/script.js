@@ -2,7 +2,7 @@
 const BLACK = 'b';
 const EMPTY = '-';
 const WHITE = 'w';
-const BOARD_SIZE = 15;
+const BOARD_SIZE = 10;
 
 const GOMOKU_PLAYER1_ADDRESS = "http://localhost:3000/ai/solve";
 
