@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const minimax = require("./algorithm/Minimax.js")
+const game = require("./algorithm/game-rules.js")
 
 const app = express();
 app.use(cors());
@@ -23,19 +24,23 @@ function shuffleArray(array) {
 
 app.post("/ai/solve", (req, res)=>{
     let state = req.body.state;
+    let player = req.body.player;
+
+    game.setPlayerRole(player);
+    
     let algoResult = minimax.expandAndFindSolution(new minimax.Node(Math.max(), Math.min(),0,state),0);
+
+    console.log(`Handling move of ${player}`);
 
     let nextMove = null;
     //shuffleArray(algoResult.children);
     algoResult.children.forEach((child)=>{
 	if(child.minimaxValue == algoResult.minimaxValue) {
 	    nextMove = child;
-	    child.printNode();
+	    //child.printNode();
 	    return;
 	}
     })
-    console.log("Result is: ");
-    //nextMove.printNode();
     res.status(200).send({"state": nextMove.state});
 });
 

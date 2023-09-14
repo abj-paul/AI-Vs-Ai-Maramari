@@ -213,4 +213,4 @@ function make_move(current_state, i, j){
 
 
 
-module.exports = {findPossibleMoves, findUtilityValue, make_move, isGameOver}
+module.exports = {findPossibleMoves, findUtilityValue, make_move, isGameOver, setPlayerRole}
