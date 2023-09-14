@@ -1,5 +1,14 @@
 * About
 Pit AIs in a fight against each other! Only the strongest one remains.
+
+* Demo
+- [[https://drive.google.com/file/d/1CJpNFNPpQrIQIianS9rkwJmp3phcKKPk/view?usp=drive_link][Demo of Attacking Heuristic AI.]]
+- [[https://drive.google.com/file/d/1a4rZWv62KBr--Ji0dVF5S13ozbeKWfbr/view?usp=drive_link][Demo of defensive heuristic AI.]]
+- Demo of Optimal Heuristic AI. The optimal AI is in branch ~minimax-update~. This branch is our main branch.
+
+[[file:resources/gui-picture.png]]
+
+
 * Details
 For now, we will make some AIs that can solve the Gomoku problem. They will fight each other. The one equipped with better heuristic will reign supreme!
 
@@ -9,11 +18,3 @@ Students from all around BSSE12 will build and equip their own AIs! Our fight wi
 
 
 Note that, we are following [[https://www.youtube.com/watch?v=siYgHaEwmZU][this popular mainstream standard of gomoku.]]
-* Demo
-[[https://drive.google.com/file/d/1CJpNFNPpQrIQIianS9rkwJmp3phcKKPk/view?usp=drive_link][Demo of Attacking Heuristic AI.]]
-[[https://drive.google.com/file/d/1a4rZWv62KBr--Ji0dVF5S13ozbeKWfbr/view?usp=drive_link][Demo of defensive heuristic AI.]]
-Demo of Optimal Heuristic AI. The optimal AI is in branch ~minimax-update~. This branch is our main branch.
-
-[[file:resources/gui-picture.png]]
-
-
